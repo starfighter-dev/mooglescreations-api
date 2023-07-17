@@ -21,7 +21,6 @@ async function getProducts() {
    for ( const product of productsWithPrices ) {
       await insertIntoDatabase(product);
    }
-   process.exit();
 }
 
 async function insertIntoDatabase(value) {
@@ -39,4 +38,4 @@ async function addPrices(products) {
    return products;
 }
 
-getProducts();
+getProducts().then(() => { process.exit(); });
