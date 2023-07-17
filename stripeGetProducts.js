@@ -24,8 +24,8 @@ async function getProducts() {
 }
 
 async function insertIntoDatabase(value) {
-   const row = [ value.id, value.name, value.description, value.default_price, value.price ];
-   await connection.promise().query("INSERT INTO products VALUES (?) ON DUPLICATE KEY UPDATE name=VALUES(name), description=VALUES(description), default_price=VALUES(default_price), price=VALUES(price)", [row]);
+   const row = [ value.id, value.name, value.description, value.default_price, value.price, 0, '' ];
+   await connection.promise().query("INSERT INTO products VALUES (?) ON DUPLICATE KEY UPDATE name=VALUES(name), description=VALUES(description), default_price=VALUES(default_price), price=VALUES(price), featured_priority=featured_priority,url_slug=url_slug", [row]);
 }
 
 async function addPrices(products) {
