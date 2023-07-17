@@ -18,27 +18,15 @@ async function getProducts() {
       limit: 100,
    });
    const productsWithPrices = await addPrices(products.data);
-   const add                = await insertIntoDatabase(productsWithPrices);
+   for ( const product of productsWithPrices ) {
+      await insertIntoDatabase(product);
+   }
+   process.exit();
 }
 
-async function insertIntoDatabase(products) {
-   var inserts = new Promise((resolve, reject) => {
-      products.forEach(async function(value,i) {
-         const row = [ value.id, value.name, value.description, value.default_price, value.price ];
-         connection.query("INSERT INTO products VALUES (?) ON DUPLICATE KEY UPDATE name=VALUES(name), description=VALUES(description), default_price=VALUES(default_price), price=VALUES(price)",
-            [row], function (error, result) {
-               if (error) throw error;
-               console.log('Row inserted successfully!');
-               if ( i === products.length-1 ) {
-                  resolve();
-               }
-           });
-      });
-   });
-
-   inserts.then(() => {
-      process.exit(); // Cheese?
-   });
+async function insertIntoDatabase(value) {
+   const row = [ value.id, value.name, value.description, value.default_price, value.price ];
+   await connection.promise().query("INSERT INTO products VALUES (?) ON DUPLICATE KEY UPDATE name=VALUES(name), description=VALUES(description), default_price=VALUES(default_price), price=VALUES(price)", [row]);
 }
 
 async function addPrices(products) {
