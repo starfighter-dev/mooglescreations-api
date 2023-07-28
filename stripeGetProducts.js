@@ -18,14 +18,14 @@ async function getProducts() {
       limit: 100,
    });
    const productsWithPrices = await addPrices(products.data);
-   for ( const product of productsWithPrices ) {
-      await insertIntoDatabase(product);
-   }
+   productsWithPrices.forEach(function(product) {
+      insertIntoDatabase(product);
+   });
 }
 
-async function insertIntoDatabase(value) {
+function insertIntoDatabase(value) {
    const row = [ value.id, value.name, value.description, value.default_price, value.price, 0, '' ];
-   await connection.promise().query("INSERT INTO products VALUES (?) ON DUPLICATE KEY UPDATE name=VALUES(name), description=VALUES(description), default_price=VALUES(default_price), price=VALUES(price), featured_priority=featured_priority,url_slug=url_slug", [row]);
+   connection.query("INSERT INTO products VALUES (?) ON DUPLICATE KEY UPDATE name=VALUES(name), description=VALUES(description), default_price=VALUES(default_price), price=VALUES(price), featured_priority=featured_priority,url_slug=url_slug", [row]);
 }
 
 async function addPrices(products) {
@@ -38,4 +38,11 @@ async function addPrices(products) {
    return products;
 }
 
-getProducts().then(() => { process.exit(); });
+getProducts().then(() => {
+   connection.end(function(err) {
+   if (err) {
+      return console.log('error:' + err.message);
+   }
+   console.log('Closed the database connection.');
+   });
+});
