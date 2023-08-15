@@ -24,8 +24,8 @@ async function getProducts() {
 }
 
 function insertIntoDatabase(value) {
-   const row = [ value.id, value.name, value.description, value.default_price, value.price, 0, '' ];
-   connection.query("INSERT INTO products VALUES (?) ON DUPLICATE KEY UPDATE name=VALUES(name), description=VALUES(description), default_price=VALUES(default_price), price=VALUES(price), featured_priority=featured_priority,url_slug=url_slug", [row]);
+   const row = [ value.id, value.name, value.description, value.default_price, value.price, 0, '', value.active === true ? 1 : 0, '', '' ];
+   connection.query("INSERT INTO products VALUES (?) ON DUPLICATE KEY UPDATE name=VALUES(name), description=VALUES(description), default_price=VALUES(default_price), price=VALUES(price), featured_priority=featured_priority, url_slug=url_slug, active=VALUES(active), long_descr=long_descr, categories=categories", [row]);
 }
 
 async function addPrices(products) {
